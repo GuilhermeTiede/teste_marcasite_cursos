@@ -13,8 +13,6 @@ const showingNavigationDropdown = ref(false);
 
 <template>
     <div class="flex">
-        <!-- Sidebar -->
-        <Sidebar />
 
         <div class="flex-1 min-h-screen bg-gray-100">
             <nav class="bg-white border-b border-gray-100">
@@ -35,6 +33,9 @@ const showingNavigationDropdown = ref(false);
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
+                                </NavLink>
+                                <NavLink :href="route('users.index')" :active="route().current('users.index')">
+                                    Gerenciar Usuarios
                                 </NavLink>
                             </div>
                         </div>
@@ -120,6 +121,12 @@ const showingNavigationDropdown = ref(false);
                             Dashboard
                         </ResponsiveNavLink>
                     </div>
+                    <div class="pt-2 pb-3 space-y-1">
+                        <ResponsiveNavLink :href="route('users.index')" :active="route().current('users.index')">
+                            Usuários
+                        </ResponsiveNavLink>
+                    </div>
+
 
                     <!-- Responsive Settings Options -->
                     <div class="pt-4 pb-1 border-t border-gray-200">
