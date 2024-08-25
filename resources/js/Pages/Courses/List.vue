@@ -1,10 +1,12 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import {Head, Link, useForm} from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import DangerButton from "@/Components/DangerButton.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
+import Modal from "@/Components/Modal.vue";
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { formatCurrency } from '@/utils/currency';
 import { formatDate } from "@/Utils/formateDate.js";
@@ -21,6 +23,21 @@ defineProps({
         required: true,
     },
 });
+
+const selectedCourse = ref(null);
+
+const confirmingUserDeletion = ref(false);
+
+const openModal = (course) => {
+    selectedCourse.value = course;
+    confirmingUserDeletion.value = true;
+};
+
+const closeModal = () => {
+    confirmingUserDeletion.value = false;
+    selectedCourse.value = null;
+};
+
 const deleteCourse = (course) => {
     form.course_id = course.id;
     form.delete(route('courses.destroy', course.id), {
@@ -106,11 +123,14 @@ onMounted(() => {
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ course.seats }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex items-center space-x-2">
                                 <Link :href="route('courses.edit', course.id)"
                                       class="text-indigo-600 hover:text-indigo-900">
                                     <i class="fas fa-edit"></i>
                                 </Link>
+                                <button @click="openModal(course)" class="text-blue-600 hover:text-blue-800 ml-3">
+                                    <i class="fa-solid fa-users"></i>
+                                </button>
                                 <DangerButton
                                     class="ml-3"
                                     @click="() => deleteCourse(course)"
@@ -125,4 +145,22 @@ onMounted(() => {
             </div>
         </div>
     </AuthenticatedLayout>
+
+    <!-- Modal para exibir alunos matriculados -->
+    <Modal :show="confirmingUserDeletion" @close="closeModal">
+        <div class="p-6">
+            <h3 class="text-lg font-medium text-gray-900">
+                Alunos Matriculados no Curso: {{ selectedCourse?.name }}
+            </h3>
+            <ul class="list-disc list-inside mt-4">
+                <li v-for="user in selectedCourse?.users || []" :key="user.id">
+                    {{ user.name }}
+                </li>
+            </ul>
+
+            <div class="mt-6 flex justify-end">
+                <SecondaryButton @click="closeModal">Fechar</SecondaryButton>
+            </div>
+        </div>
+    </Modal>
 </template>

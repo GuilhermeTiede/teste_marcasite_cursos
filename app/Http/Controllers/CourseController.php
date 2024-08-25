@@ -11,7 +11,7 @@ class CourseController extends Controller
 {
     public function index()
     {
-        $courses = Course::with('materials')->get();
+        $courses = Course::with('materials', 'users')->get();
 
         return Inertia::render('Courses/List', [
             'courses' => $courses,
