@@ -53,7 +53,7 @@ class CourseController extends Controller
             'is_active' => $isActive,
         ]);
 
-        return redirect()->route('courses.index')->with('success', 'Course updated successfully.');
+        return redirect()->route('courses.index')->with('success', 'Curso atualizado com sucesso!');
     }
 
 
@@ -84,7 +84,7 @@ class CourseController extends Controller
             'is_active' => $isActive,
         ]);
 
-        return redirect()->route('courses.index')->with('success', 'Course created successfully.');
+        return redirect()->route('courses.index')->with('success', 'Curso criado com sucesso!');
     }
 
 
@@ -93,6 +93,6 @@ class CourseController extends Controller
     {
         $course->delete();
 
-        return Redirect::route('courses.index')->with('success', 'Curso excluído com sucesso.');
+        return Redirect::route('courses.index')->with('success', 'Curso excluído com sucesso!');
     }
 }
