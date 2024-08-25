@@ -6,8 +6,11 @@ import InputError from "@/Components/InputError.vue";
 import TextareaInput from "@/Components/TextareaInput.vue";
 import { VSelect } from 'vuetify/components';
 import { formatCurrency } from '@/utils/currency';
+import { VAutocomplete } from 'vuetify/components';
 
 const course = usePage().props.course || {};
+const enrolledUsers = usePage().props.enrolledUsers || []; // Usuários já inscritos
+const users = usePage().props.users || []; // Todos os usuários disponíveis
 
 const form = useForm({
     name: course.name || '',
@@ -19,6 +22,7 @@ const form = useForm({
     description: course.description || '',
     thumbnail: course.thumbnail || '',
     is_active: course.is_active ?? '',
+    user_id: null,
 });
 
 const isActiveItems = ['Ativo', 'Inativo'];
@@ -39,6 +43,20 @@ const submit = () => {
         });
     }
 };
+const enrollUser = () => {
+    form.post(route('courses.enroll', course.id), {
+        onSuccess: () => {
+            form.reset('user_id');
+        },
+    });
+};
+
+const unenrollUser = (userId) => {
+    form.delete(route('courses.unenroll', { course: course.id, user: userId }), {
+        onSuccess: () => form.reset(),
+    });
+};
+
 </script>
 
 <template>
@@ -176,6 +194,42 @@ const submit = () => {
                             </button>
                         </div>
                     </form>
+
+                        <div class="md:col-span-2">
+                            <h3 class="text-lg font-medium text-gray-900">Alunos Inscritos</h3>
+                            <ul class="list-disc list-inside">
+                                <li v-for="user in enrolledUsers" :key="user.id" class="flex items-center">
+                                    <span class="flex items-center">
+                                        {{ user.name }}
+                                        <button class="ml-2 text-red-600 hover:text-red-800" @click="unenrollUser(user.id)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                        <!-- Formulário de Inscrição de Usuário -->
+                        <div class="md:col-span-2">
+                            <v-autocomplete
+                                v-model="form.user_id"
+                                :items="users"
+                                item-title="name"
+                                item-value="id"
+                                label="Inscrever Aluno"
+                                variant="outlined"
+                            />
+
+                            <InputError :message="form.errors.user_id" class="mt-2"/>
+                            <button
+                                type="button"
+                                @click="enrollUser"
+                                class="mt-4 text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm"
+                            >
+                                Inscrever Aluno
+                            </button>
+                        </div>
                 </div>
             </div>
         </div>

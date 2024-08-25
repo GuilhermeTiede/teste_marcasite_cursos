@@ -26,6 +26,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('/users', UserController::class);
     Route::resource('/courses', CourseController::class);
+    Route::post('/courses/{course}/enroll', [CourseController::class, 'enrollUserInCourse'])->name('courses.enroll');
+    Route::delete('/courses/{course}/unenroll/{user}', [CourseController::class, 'unenrollUserFromCourse'])->name('courses.unenroll');
+
 });
 
 require __DIR__.'/auth.php';

@@ -13,7 +13,7 @@ const form = useForm({
     course_id: null,
 });
 
-const { props } = usePage(); // Acessa as props globais, incluindo mensagens flash
+const { props } = usePage();
 
 defineProps({
     courses: {
@@ -21,18 +21,19 @@ defineProps({
         required: true,
     },
 });
-
 const deleteCourse = (course) => {
     form.course_id = course.id;
     form.delete(route('courses.destroy', course.id), {
         preserveScroll: true,
         onSuccess: () => {
-            form.reset();
-            toast.success('Curso excluído com sucesso.');
+            toast.success('Curso excluído com sucesso!');
         },
-        onError: (response) => {
-            const errorMessage = response.message || 'Ocorreu um erro ao excluir o curso.';
-            toast.error(errorMessage);
+        onError: (errors) => {
+            if (errors?.message) {
+                toast.error(errors.message);
+            } else {
+                toast.error('Ocorreu um erro ao tentar excluir o curso.');
+            }
         },
         onFinish: () => form.reset(),
     });
@@ -41,6 +42,8 @@ const deleteCourse = (course) => {
 onMounted(() => {
     if (props.flash?.success) {
         toast.success(props.flash.success);
+    } else if (props.flash?.error) {
+        toast.error(props.flash.error);
     }
 });
 </script>
