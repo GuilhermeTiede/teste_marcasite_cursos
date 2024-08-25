@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class CourseController extends Controller
@@ -16,9 +17,8 @@ class CourseController extends Controller
         ]);
     }
 
-    public function edit($id)
+    public function edit(Course $course)
     {
-        $course = Course::with('materials')->findOrFail($id);
 
         return Inertia::render('Courses/Edit', [
             'course' => $course,
@@ -29,23 +29,70 @@ class CourseController extends Controller
     {
         $course = Course::findOrFail($id);
 
-        $course->update($request->all());
+        // Verifica se o preço contém 'R$'. Se sim, realiza a conversão.
+        if (strpos($request->price, 'R$') !== false) {
+            $price = str_replace(['R$', ' ', '.'], '', $request->input('price'));
+            $price = str_replace(',', '.', $price);
+        } else {
+            $price = $request->input('price');
+        }
+
+        // Converte o valor de is_active para booleano
+        $isActive = $request->input('is_active') === 'Ativo' || $request->input('is_active') == 1;
+
+        // Atualiza o curso com os valores processados
+        $course->update([
+            'name' => $request->input('name'),
+            'category' => $request->input('category'),
+            'price' => $price,
+            'seats' => $request->input('seats'),
+            'registration_start' => $request->input('registration_start'),
+            'registration_end' => $request->input('registration_end'),
+            'description' => $request->input('description'),
+            'thumbnail' => $request->input('thumbnail'),
+            'is_active' => $isActive,
+        ]);
 
         return redirect()->route('courses.index')->with('success', 'Course updated successfully.');
     }
 
+
+    public function create()
+    {
+        return Inertia::render('Courses/Edit',[
+            'course' => new Course(),
+        ]);
+    }
+
     public function store(Request $request)
     {
-        $course = Course::create($request->all());
+        $price = str_replace(['R$', ' ', '.'], '', $request->input('price'));
+        $price = str_replace(',', '.', $price);
+
+        $isActive = $request->input('is_active') === 'Ativo' || $request->input('is_active') == 1;
+
+        // Cria um novo curso com os valores processados
+        $course = Course::create([
+            'name' => $request->input('name'),
+            'category' => $request->input('category'),
+            'price' => $price,
+            'seats' => $request->input('seats'),
+            'registration_start' => $request->input('registration_start'),
+            'registration_end' => $request->input('registration_end'),
+            'description' => $request->input('description'),
+            'thumbnail' => $request->input('thumbnail'),
+            'is_active' => $isActive,
+        ]);
 
         return redirect()->route('courses.index')->with('success', 'Course created successfully.');
     }
 
-    public function destroy($id)
+
+
+    public function destroy(Course $course)
     {
-        $course = Course::findOrFail($id);
         $course->delete();
 
-        return redirect()->route('courses.index')->with('success', 'Course deleted successfully.');
+        return Redirect::route('courses.index')->with('success', 'Curso excluído com sucesso.');
     }
 }

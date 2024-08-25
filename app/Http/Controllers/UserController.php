@@ -102,7 +102,7 @@ class UserController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, User $user)
-    {;
+    {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
@@ -140,16 +140,11 @@ class UserController extends Controller
     }
 
 
-
     private function isCurrentUser(User $user): bool
     {
         return auth()->user()->id === $user->id;
     }
 
-    private function redirectWithMessage(string $route, string $type, string $message)
-    {
-        return redirect()->route($route)->with($type, $message);
-    }
 
 
 }
