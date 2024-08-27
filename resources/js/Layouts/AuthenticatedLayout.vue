@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
@@ -9,6 +10,10 @@ import { Link } from '@inertiajs/vue3';
 import Sidebar from '@/Components/Sidebar.vue'; // Import the Sidebar component
 
 const showingNavigationDropdown = ref(false);
+const pageProps = usePage().props;
+const userRole = pageProps.auth.user?.role;
+
+
 </script>
 
 <template>
@@ -30,7 +35,7 @@ const showingNavigationDropdown = ref(false);
                             </div>
 
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div v-if="userRole === 'admin'" class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
@@ -39,6 +44,18 @@ const showingNavigationDropdown = ref(false);
                                 </NavLink>
                                 <NavLink :href="route('courses.index')" :active="route().current('courses.index')">
                                     Gerenciar Cursos
+                                </NavLink>
+                            </div>
+
+                            <div v-if="userRole === 'user'" class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                                    Dashboard
+                                </NavLink>
+                                <NavLink :href="route('users.index')" :active="route().current('users.index')">
+                                    Meus Cursos
+                                </NavLink>
+                                <NavLink :href="route('courses.index')" :active="route().current('courses.index')">
+                                    Vitrine de Cursos
                                 </NavLink>
                             </div>
                         </div>

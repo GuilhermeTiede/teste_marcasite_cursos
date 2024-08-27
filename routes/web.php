@@ -24,10 +24,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+});
+
+Route::middleware(['auth', \App\Http\Middleware\CheckRole::class.':admin'])->group(function () {
     Route::resource('/users', UserController::class);
     Route::resource('/courses', CourseController::class);
     Route::post('/courses/{course}/enroll', [CourseController::class, 'enrollUserInCourse'])->name('courses.enroll');
     Route::delete('/courses/{course}/unenroll/{user}', [CourseController::class, 'unenrollUserFromCourse'])->name('courses.unenroll');
+});
+
+Route::middleware(['auth', \App\Http\Middleware\CheckRole::class.':user'])->group(function () {
 
 });
 
