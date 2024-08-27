@@ -163,6 +163,45 @@ class CourseController extends Controller
 
         return redirect()->route('courses.index', $courseId)->with('error', 'Aluno não está inscrito neste curso.');
     }
+    public function listMyCourses()
+    {
+        $user = auth()->user();
+        $courses = $user->courses()->with('materials')->get();
+
+        return Inertia::render('MyCourses/List', [
+            'courses' => $courses->map(function($course) {
+                return [
+                    'id' => $course->id,
+                    'name' => $course->name,
+                    'category' => $course->category,
+                    'enrolled_at' => $course->pivot->enrolled_at,
+                    'status' => $course->pivot->status,
+                    'price_paid' => $course->pivot->price_paid,
+                    'materials' => $course->materials,
+                ];
+            }),
+        ]);
+    }
+
+    public function editMyCourse(Course $course)
+    {
+        $user = auth()->user();
+
+        // Verifica se o usuário está matriculado no curso
+        $enrollment = $user->courses()->where('course_id', $course->id)->firstOrFail();
+
+        return Inertia::render('MyCourses/Edit', [
+            'course' => [
+                'id' => $course->id,
+                'name' => $course->name,
+                'category' => $course->category,
+                'enrolled_at' => $enrollment->pivot->enrolled_at,
+                'status' => $enrollment->pivot->status,
+                'price_paid' => $enrollment->pivot->price_paid,
+            ],
+        ]);
+    }
+
 
 
 }

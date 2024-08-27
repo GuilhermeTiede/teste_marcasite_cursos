@@ -51,10 +51,10 @@ const userRole = pageProps.auth.user?.role;
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
-                                <NavLink :href="route('users.index')" :active="route().current('users.index')">
+                                <NavLink :href="route('mycourses.list')" :active="route().current('users.index')">
                                     Meus Cursos
                                 </NavLink>
-                                <NavLink :href="route('courses.index')" :active="route().current('courses.index')">
+                                <NavLink :href="route('dashboard')" :active="route().current('courses.index')">
                                     Vitrine de Cursos
                                 </NavLink>
                             </div>

@@ -35,7 +35,8 @@ Route::middleware(['auth', \App\Http\Middleware\CheckRole::class.':admin'])->gro
 });
 
 Route::middleware(['auth', \App\Http\Middleware\CheckRole::class.':user'])->group(function () {
-
+    Route::get('/my-courses', [CourseController::class, 'listMyCourses'])->name('mycourses.list');
+    Route::get('/my-courses/{course}/edit', [CourseController::class, 'editMyCourse'])->name('mycourses.edit');
 });
 
 require __DIR__.'/auth.php';
