@@ -41,6 +41,8 @@ Route::middleware(['auth', \App\Http\Middleware\CheckRole::class.':user'])->grou
     Route::get('/my-courses', [CourseController::class, 'listMyCourses'])->name('mycourses.list');
     Route::get('/my-courses/{course}/edit', [CourseController::class, 'editMyCourse'])->name('mycourses.edit');
     Route::get('/showcase', [CourseController::class, 'showcase'])->name('showcase');
+    Route::post('/courses/{course}/enroll', [CourseController::class, 'enroll'])->name('enroll');
+
 });
 
 require __DIR__.'/auth.php';

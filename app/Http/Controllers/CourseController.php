@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -207,6 +208,31 @@ class CourseController extends Controller
         return Inertia::render('Showcase/List', [
             'courses' => $courses,
         ]);
+    }
+
+    public function enroll(Request $request, $courseId)
+    {
+        $course = Course::findOrFail($courseId);
+        $user = Auth::user();
+
+        if ($course->users()->where('user_id', $user->id)->exists()) {
+            return redirect()->route('showcase')->with('error', 'Você já está matriculado neste curso.');
+        }
+
+        if ($course->seats > 0) {
+            $course->users()->attach($user->id, [
+                'enrolled_at' => now(),
+                'price_paid' => $course->price,
+                'status' => 'active'
+            ]);
+
+            $course->seats -= 1;
+            $course->save();
+
+            return redirect()->route('showcase')->with('success', 'Curso Compro e matrícula realizada com sucesso!');
+        }
+
+        return redirect()->route('showcase')->with('error', 'Não há vagas disponíveis.');
     }
 
 }

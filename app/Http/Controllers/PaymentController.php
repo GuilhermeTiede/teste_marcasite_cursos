@@ -24,7 +24,7 @@ class PaymentController extends Controller
                 'quantity' => 1,
             ]],
             'mode' => 'payment',
-            'success_url' => route('showcase')->with('success', 'Payment successful!'),
+            'success_url' => route('showcase', ['course' => $request->course_id, 'enrolled' => true]),
             'cancel_url' => route('showcase'),
         ]);
 

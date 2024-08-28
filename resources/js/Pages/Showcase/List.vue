@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { formatCurrency } from '@/utils/currency';
 import { formatDate } from "@/Utils/formateDate.js";
@@ -22,9 +22,34 @@ defineProps({
     },
 });
 
+onMounted(() => {
+    const flashMessage = props?.flash || {};
+
+    if (flashMessage.success) {
+        toast.success(flashMessage.success);
+    } else if (flashMessage.error) {
+        toast.error(flashMessage.error);
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseId = urlParams.get('course');
+    const enrolled = urlParams.get('enrolled');
+
+    if (courseId && enrolled) {
+        axios.post(route('enroll', { course: courseId }))
+            .then(response => {
+                toast.success('Curso Compro e matrícula realizada com sucesso!');
+            })
+            .catch(error => {
+                toast.error('Erro ao realizar matrícula.');
+            });
+    }
+});
+
 const enrollCourse = async (course) => {
     const stripe = await loadStripe(import.meta.env.VITE_STRIPE_KEY);
     const response = await axios.post(route('purchase.course'), {
+        course_id: course.id,
         course_name: course.name,
         price: course.price,
     });
