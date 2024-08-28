@@ -89,7 +89,6 @@ class CourseController extends Controller
 
         $isActive = $request->input('is_active') === 'Ativo' || $request->input('is_active') == 1;
 
-        // Cria um novo curso com os valores processados
         $course = Course::create([
             'name' => $request->input('name'),
             'category' => $request->input('category'),

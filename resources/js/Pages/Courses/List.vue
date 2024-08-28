@@ -6,13 +6,15 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import Modal from "@/Components/Modal.vue";
 import {toast} from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
-import {ref, computed, onMounted} from 'vue';
+import {ref, computed, onMounted, watch} from 'vue';
 import {usePage} from '@inertiajs/vue3';
 import {formatCurrency} from '@/utils/currency';
 import {formatDate} from "@/Utils/formateDate.js";
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import axios from 'axios';
+import * as jspdf from "jspdf";
 
 const form = useForm({
     course_id: null,
@@ -34,17 +36,21 @@ const searchQuery = ref('');
 const openModal = (course) => {
     selectedCourse.value = course;
     confirmingUserDeletion.value = true;
+    searchStudents();
 };
 
 const closeModal = () => {
     confirmingUserDeletion.value = false;
     selectedCourse.value = null;
     searchQuery.value = '';
+    filteredUsers.value = [];
 };
 
 const filteredUsers = ref([]);
 
 const searchStudents = async () => {
+    if (!selectedCourse.value) return;
+
     try {
         const response = await axios.get(route('courses.students.search', selectedCourse.value.id), {
             params: {
@@ -64,24 +70,25 @@ watch(searchQuery, () => {
 });
 
 const deleteCourse = (course) => {
-    form.course_id = course.id;
+    form.set('course_id', course.id);
     form.delete(route('courses.destroy', course.id), {
         preserveScroll: true,
         onSuccess: () => {
             toast.success('Curso excluído com sucesso!');
         },
         onError: (errors) => {
-            if (errors?.message) {
-                toast.error(errors.message);
-            } else {
-                toast.error('Ocorreu um erro ao tentar excluir o curso.');
-            }
+            toast.error(errors?.message || 'Ocorreu um erro ao tentar excluir o curso.');
         },
         onFinish: () => form.reset(),
     });
 };
 
 const exportToExcel = () => {
+    if (filteredUsers.value.length === 0) {
+        toast.error('Nenhum aluno encontrado para exportação.');
+        return;
+    }
+
     const worksheet = XLSX.utils.json_to_sheet(filteredUsers.value);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Alunos');
@@ -89,6 +96,11 @@ const exportToExcel = () => {
 };
 
 const exportToPDF = () => {
+    if (filteredUsers.value.length === 0) {
+        toast.error('Nenhum aluno encontrado para exportação.');
+        return;
+    }
+
     const doc = new jsPDF();
     doc.autoTable({
         head: [['Nome']],
@@ -187,7 +199,6 @@ onMounted(() => {
         </div>
     </AuthenticatedLayout>
 
-    <!-- Modal para exibir alunos matriculados -->
     <Modal :show="confirmingUserDeletion" @close="closeModal">
         <div class="p-6">
             <h3 class="text-lg font-medium text-gray-900">

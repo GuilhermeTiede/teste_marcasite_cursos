@@ -37,15 +37,20 @@ Depois, acesse o link do repositório gerado pelo Valet no seu navegador.
 ## 5. Configuração do Arquivo .env
 Edite o arquivo .env na raiz do projeto para configurar a conexão com seu banco de dados
 MySQL. Certifique-se de definir as seguintes variáveis de ambiente:
+```bash Copiar código
+cp .env.example .env
+php artisan key:generate
+```
 
 ```makefile Copiar código
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=nome_do_banco
-DB_USERNAME=seu_usuario
-DB_PASSWORD=sua_senha
+DB_DATABASE=marcasite_cursos
+DB_USERNAME=root
+DB_PASSWORD=password
 ```
+
 ## 6. Executar as Migrações
 Após configurar o banco de dados, execute as migrações para criar as tabelas necessárias:
 
