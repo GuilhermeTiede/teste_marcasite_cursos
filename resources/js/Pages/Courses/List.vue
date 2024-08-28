@@ -1,21 +1,24 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import {Head, Link, useForm} from '@inertiajs/vue3';
 import DangerButton from "@/Components/DangerButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import Modal from "@/Components/Modal.vue";
-import { toast } from 'vue3-toastify';
+import {toast} from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
-import { ref, onMounted } from 'vue';
-import { usePage } from '@inertiajs/vue3';
-import { formatCurrency } from '@/utils/currency';
-import { formatDate } from "@/Utils/formateDate.js";
+import {ref, computed, onMounted} from 'vue';
+import {usePage} from '@inertiajs/vue3';
+import {formatCurrency} from '@/utils/currency';
+import {formatDate} from "@/Utils/formateDate.js";
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const form = useForm({
     course_id: null,
 });
 
-const { props } = usePage();
+const {props} = usePage();
 
 defineProps({
     courses: {
@@ -25,8 +28,8 @@ defineProps({
 });
 
 const selectedCourse = ref(null);
-
 const confirmingUserDeletion = ref(false);
+const searchQuery = ref('');
 
 const openModal = (course) => {
     selectedCourse.value = course;
@@ -36,7 +39,29 @@ const openModal = (course) => {
 const closeModal = () => {
     confirmingUserDeletion.value = false;
     selectedCourse.value = null;
+    searchQuery.value = '';
 };
+
+const filteredUsers = ref([]);
+
+const searchStudents = async () => {
+    try {
+        const response = await axios.get(route('courses.students.search', selectedCourse.value.id), {
+            params: {
+                query: searchQuery.value
+            }
+        });
+        filteredUsers.value = response.data;
+    } catch (error) {
+        toast.error('Erro ao buscar alunos.');
+    }
+};
+
+watch(searchQuery, () => {
+    if (searchQuery.value.length > 2 || searchQuery.value.length === 0) {
+        searchStudents();
+    }
+});
 
 const deleteCourse = (course) => {
     form.course_id = course.id;
@@ -54,6 +79,22 @@ const deleteCourse = (course) => {
         },
         onFinish: () => form.reset(),
     });
+};
+
+const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(filteredUsers.value);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Alunos');
+    XLSX.writeFile(workbook, `alunos_${selectedCourse.value.name}.xlsx`);
+};
+
+const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.autoTable({
+        head: [['Nome']],
+        body: filteredUsers.value.map(user => [user.name]),
+    });
+    doc.save(`alunos_${selectedCourse.value.name}.pdf`);
 };
 
 onMounted(() => {
@@ -152,13 +193,21 @@ onMounted(() => {
             <h3 class="text-lg font-medium text-gray-900">
                 Alunos Matriculados no Curso: {{ selectedCourse?.name }}
             </h3>
+            <input
+                type="text"
+                placeholder="Buscar aluno..."
+                v-model="searchQuery"
+                class="mt-4 p-2 border rounded w-full"
+            />
             <ul class="list-disc list-inside mt-4">
-                <li v-for="user in selectedCourse?.users || []" :key="user.id">
+                <li v-for="user in filteredUsers" :key="user.id">
                     {{ user.name }}
                 </li>
             </ul>
 
-            <div class="mt-6 flex justify-end">
+            <div class="mt-6 flex justify-end space-x-4">
+                <SecondaryButton @click="exportToExcel">Exportar Excel</SecondaryButton>
+                <SecondaryButton @click="exportToPDF">Exportar PDF</SecondaryButton>
                 <SecondaryButton @click="closeModal">Fechar</SecondaryButton>
             </div>
         </div>

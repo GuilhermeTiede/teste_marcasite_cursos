@@ -1,66 +1,72 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Guia de Instalação do Projeto Laravel com Vue.js - Marcasite Cursos 
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
++ Este guia descreve o processo de instalação de um projeto Laravel com Vue.js. Siga os passos abaixo para configurar o ambiente e rodar o projeto.
 
-## About Laravel
++ O projeto consiste em um sistema de cadastro de cursos, onde é possível adicionar, editar e excluir cursos. O frontend foi desenvolvido com Vue.js e o backend com Laravel.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 1. Clonar o Repositório
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Primeiro, clone o repositório do projeto usando o Git:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+git clone https://github.com/GuilhermeTiede/teste_marcasite_cursos.git
+```
 
-## Learning Laravel
+## 2. Instalar Dependências do Laravel
+Navegue até o diretório do projeto e instale as dependências do Laravel com o Composer:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```bash Copiar código
+cd teste_marcasite_cursos
+composer install
+```
+## 3. Instalar Dependências do Frontend
+Em seguida, instale as dependências do frontend usando o Yarn:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash Copiar código
+yarn install
+```
+## 4. (Opcional) Configuração com Laravel Valet
+Se você utiliza o Laravel Valet para gerenciar seu ambiente de desenvolvimento, execute os seguintes comandos para criar o link simbólico e habilitar o HTTPS:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash Copiar código
+valet link
+valet secure
+```
+Depois, acesse o link do repositório gerado pelo Valet no seu navegador.
 
-## Laravel Sponsors
+## 5. Configuração do Arquivo .env
+Edite o arquivo .env na raiz do projeto para configurar a conexão com seu banco de dados
+MySQL. Certifique-se de definir as seguintes variáveis de ambiente:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```makefile Copiar código
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nome_do_banco
+DB_USERNAME=seu_usuario
+DB_PASSWORD=sua_senha
+```
+## 6. Executar as Migrações
+Após configurar o banco de dados, execute as migrações para criar as tabelas necessárias:
 
-### Premium Partners
+```bash Copiar código
+php artisan migrate
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## 7. Rodar o Projeto
+Para iniciar o servidor de desenvolvimento e rodar o projeto, utilize o comando abaixo:
 
-## Contributing
+```bash Copiar código
+yarn dev
+```
+Se preferir, você pode apenas gerar os arquivos de build para produção usando o Vite:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash Copiar código
+yarn build
+```
+## 8. Acessar o Projeto
+Se você configurou o Laravel Valet, acesse o projeto pelo link fornecido. Caso contrário, o projeto estará acessível através do servidor embutido do Laravel na URL padrão (http://localhost:8000).
 
-## Code of Conduct
+Pronto! ambiente configurado e o projeto deve estar rodando corretamente.
+Se algum imprevisto surgir não exitem em me chamar que estarei disposto a ajudar.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

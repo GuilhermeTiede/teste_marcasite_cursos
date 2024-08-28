@@ -161,6 +161,17 @@ class CourseController extends Controller
 
         return redirect()->route('courses.index', $courseId)->with('error', 'Aluno não está inscrito neste curso.');
     }
+    public function searchStudents(Request $request, $courseId)
+    {
+        $course = Course::with(['users' => function($query) use ($request) {
+            if ($request->has('query')) {
+                $query->where('name', 'LIKE', '%' . $request->query('query') . '%');
+            }
+        }])->findOrFail($courseId);
+
+        return response()->json($course->users);
+    }
+
     public function listMyCourses()
     {
         $user = auth()->user();
