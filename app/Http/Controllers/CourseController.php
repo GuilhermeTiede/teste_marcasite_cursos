@@ -125,17 +125,14 @@ class CourseController extends Controller
         $course = Course::findOrFail($courseId);
         $user = User::findOrFail($request->user_id);
 
-        // Verifica se o usuário já está inscrito no curso
         if ($course->users()->where('user_id', $user->id)->exists()) {
             return redirect()->route('courses.index', $courseId)->with('error', 'Este aluno já está inscrito neste curso.');
         }
 
-        // Verifica se ainda há vagas disponíveis
         if ($course->seats > 0) {
-            // Vincula o usuário ao curso
+
             $course->users()->attach($user->id);
 
-            // Reduz o número de vagas
             $course->seats -= 1;
             $course->save();
 
@@ -203,5 +200,13 @@ class CourseController extends Controller
     }
 
 
+    public function showcase()
+    {
+        $courses = Course::where('is_active', 1)->get();
+
+        return Inertia::render('Showcase/List', [
+            'courses' => $courses,
+        ]);
+    }
 
 }

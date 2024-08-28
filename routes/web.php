@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -24,6 +25,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/purchase-course', [PaymentController::class, 'purchaseCourse'])->name('purchase.course');
+
 
 });
 
@@ -37,6 +40,7 @@ Route::middleware(['auth', \App\Http\Middleware\CheckRole::class.':admin'])->gro
 Route::middleware(['auth', \App\Http\Middleware\CheckRole::class.':user'])->group(function () {
     Route::get('/my-courses', [CourseController::class, 'listMyCourses'])->name('mycourses.list');
     Route::get('/my-courses/{course}/edit', [CourseController::class, 'editMyCourse'])->name('mycourses.edit');
+    Route::get('/showcase', [CourseController::class, 'showcase'])->name('showcase');
 });
 
 require __DIR__.'/auth.php';
