@@ -1,15 +1,15 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import {Head, Link} from '@inertiajs/vue3';
 import {onMounted, ref} from 'vue';
-import { usePage } from '@inertiajs/vue3';
-import { formatCurrency } from '@/utils/currency';
-import { formatDate } from "@/Utils/formateDate.js";
-import { toast } from 'vue3-toastify';
+import {usePage} from '@inertiajs/vue3';
+import {formatCurrency} from '@/utils/currency';
+import {formatDate} from "@/Utils/formateDate.js";
+import {toast} from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import {loadStripe} from '@stripe/stripe-js';
 
-const { props } = usePage();
+const {props} = usePage();
 
 defineProps({
     courses: {
@@ -36,7 +36,7 @@ onMounted(() => {
     const enrolled = urlParams.get('enrolled');
 
     if (courseId && enrolled) {
-        axios.post(route('enroll', { course: courseId }))
+        axios.post(route('enroll', {course: courseId}))
             .then(response => {
                 toast.success('Curso Compro e matrícula realizada com sucesso!');
             })
@@ -56,7 +56,7 @@ const enrollCourse = async (course) => {
 
     const sessionId = response.data.id;
 
-    stripe.redirectToCheckout({ sessionId });
+    stripe.redirectToCheckout({sessionId});
 };
 
 const isEnrolled = (courseId) => {
@@ -84,6 +84,9 @@ const isEnrolled = (courseId) => {
                         <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Miniatura
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Nome
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -103,6 +106,12 @@ const isEnrolled = (courseId) => {
                         <tbody>
                         <tr v-for="course in courses" :key="course.id" class="bg-white border-b border-gray-200">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                <img v-if="course.thumbnail_path" :src="`/storage/${course.thumbnail_path}`"
+                                     alt="Miniatura do curso"
+                                     class="w-16 h-16 object-cover"/>
+                                <span v-else class="text-gray-500">Sem miniatura</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                 {{ course.name }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -116,11 +125,17 @@ const isEnrolled = (courseId) => {
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex items-center space-x-2">
                                 <button
+                                    :class="{
+        'bg-red-400 cursor-not-allowed': course.seats === 0,
+        'bg-blue-600 hover:bg-blue-700': course.seats > 0 && !isEnrolled(course.id),
+        'text-white': true,
+        'px-4 py-2 rounded-lg text-sm': true
+    }"
+                                    :disabled="isEnrolled(course.id) || course.seats === 0"
                                     @click="enrollCourse(course)"
-                                    :disabled="isEnrolled(course.id)"
-                                    class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm"
                                 >
                                     <span v-if="isEnrolled(course.id)">Já Matriculado</span>
+                                    <span v-else-if="course.seats === 0">Esgotado!</span>
                                     <span v-else>Comprar</span>
                                 </button>
                             </td>
