@@ -1,3 +1,15 @@
+
+## Atualizações:
+Curso mostra botão de esgotado impedindo de ir para tela de compras do curso quando vagas zeradas.
+
+![img.png](img.png)
+
+Permite vincular thumbnail(miniatura) ao curso.
+![img_1.png](img_1.png)
+
+Insere algumas validações no cadastro de cursos. Exemplo abaixo.
+![img_2.png](img_2.png)
+
 # Guia de Instalação do Projeto Laravel com Vue.js - Marcasite Cursos 
 
 + Este guia descreve o processo de instalação de um projeto Laravel com Vue.js. Siga os passos abaixo para configurar o ambiente e rodar o projeto.
@@ -76,13 +88,3 @@ Pronto! ambiente configurado e o projeto deve estar rodando corretamente.
 Se algum imprevisto surgir não exitem em me chamar que estarei disposto a ajudar.
 
 
-## Atualizações:
-Curso mostra botão de esgotado impedindo de ir para tela de compras do curso quando vagas zeradas.
-
-![img.png](img.png)
-
-Permite vincular thumbnail(miniatura) ao curso.
-![img_1.png](img_1.png)
-
-Insere algumas validações no cadastro de cursos. Exemplo abaixo. 
-![img_2.png](img_2.png)
