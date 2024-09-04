@@ -48,13 +48,14 @@ class CourseController extends Controller
     public function update(CoursesRequest $request, $id)
     {
         try {
-            $course = Course::findOrFail($id);
+            $request->validated();
 
             $price = $request->price;
             if (strpos($price, 'R$') !== false) {
                 $price = str_replace(['R$', ' ', '.'], '', $price);
                 $price = str_replace(',', '.', $price);
             }
+            $course = Course::findOrFail($id);
 
             $isActive = $request->input('is_active') === 'Ativo' || $request->input('is_active') == 1;
 
@@ -66,59 +67,13 @@ class CourseController extends Controller
                 'registration_start' => $request->input('registration_start'),
                 'registration_end' => $request->input('registration_end'),
                 'description' => $request->input('description'),
-                'thumbnail' => $request->input('thumbnail'),
+                'thumbnail_path' => $request->input('thumbnail_path'),
                 'is_active' => $isActive,
             ]);
 
             return redirect()->route('courses.index')->with('success', 'Curso atualizado com sucesso!');
         } catch (Exception $e) {
             return Redirect::back()->withErrors(['error' => 'Falha ao atualizar o curso.']);
-        }
-    }
-
-    public function store(CoursesRequest $request)
-    {
-        try {
-            $price = $request->price;
-            if (strpos($price, 'R$') !== false) {
-                $price = str_replace(['R$', ' ', '.'], '', $price);
-                $price = str_replace(',', '.', $price);
-            }
-
-            $isActive = $request->input('is_active') === 'Ativo' || $request->input('is_active') == 1;
-
-            $course = Course::create([
-                'name' => $request->input('name'),
-                'category' => $request->input('category'),
-                'price' => $price,
-                'seats' => $request->input('seats'),
-                'registration_start' => $request->input('registration_start'),
-                'registration_end' => $request->input('registration_end'),
-                'description' => $request->input('description'),
-                'thumbnail' => $request->input('thumbnail'),
-                'is_active' => $isActive,
-            ]);
-
-            return redirect()->route('courses.index')->with('success', 'Curso criado com sucesso!');
-        } catch (Exception $e) {
-            return Redirect::back()->withErrors(['error' => 'Falha ao criar o curso.']);
-        }
-    }
-
-    public function create()
-    {
-        try {
-            $users = User::select('id', 'name')
-                ->where('role', 'user')
-                ->where('active', 1)
-                ->get();
-
-            return Inertia::render('Courses/Edit', [
-                'course' => new Course(),
-                'users' => $users,
-            ]);
-        } catch (Exception $e) {
-            return Redirect::back()->withErrors(['error' => 'Falha ao carregar os dados necessários.']);
         }
     }
 
@@ -243,7 +198,6 @@ class CourseController extends Controller
         ]);
     }
 
-
     public function showcase()
     {
         $courses = Course::where('is_active', 1)->get();
@@ -277,5 +231,71 @@ class CourseController extends Controller
 
         return redirect()->route('showcase')->with('error', 'Não há vagas disponíveis.');
     }
+
+    public function uploadThumbnail(Request $request)
+    {
+        $request->validate([
+            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')->store('thumbnails', 'public');
+
+            // Retorna o caminho absoluto no sistema de arquivos
+            return response()->json(['key' => $path], 200);
+        }
+
+        return response()->json(['error' => 'Falha ao enviar a imagem.'], 400);
+    }
+
+
+    public function store(CoursesRequest $request)
+    {
+        try {
+            $request->validated();
+
+            $price = $request->price;
+            if (strpos($price, 'R$') !== false) {
+                $price = str_replace(['R$', ' ', '.'], '', $price);
+                $price = str_replace(',', '.', $price);
+            }
+
+            $isActive = $request->input('is_active') === 'Ativo' || $request->input('is_active') == 1;
+
+            $course = Course::create([
+                'name' => $request->input('name'),
+                'category' => $request->input('category'),
+                'price' => $price,
+                'seats' => $request->input('seats'),
+                'registration_start' => $request->input('registration_start'),
+                'registration_end' => $request->input('registration_end'),
+                'description' => $request->input('description'),
+                'thumbnail' => $request->input('thumbnail'),
+                'is_active' => $isActive,
+            ]);
+
+            return redirect()->route('courses.index')->with('success', 'Curso criado com sucesso!');
+        } catch (Exception $e) {
+            return Redirect::back()->withErrors(['error' => 'Falha ao criar o curso.']);
+        }
+    }
+
+    public function create()
+    {
+        try {
+            $users = User::select('id', 'name')
+                ->where('role', 'user')
+                ->where('active', 1)
+                ->get();
+
+            return Inertia::render('Courses/Edit', [
+                'course' => new Course(),
+                'users' => $users,
+            ]);
+        } catch (Exception $e) {
+            return Redirect::back()->withErrors(['error' => 'Falha ao carregar os dados necessários.']);
+        }
+    }
+
 
 }

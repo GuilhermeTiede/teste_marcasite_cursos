@@ -12,7 +12,7 @@ class Course extends Model
     protected $fillable = [
         'name', 'category', 'price', 'seats',
         'registration_start', 'registration_end',
-        'description', 'thumbnail', 'is_active'
+        'description', 'thumbnail_path', 'is_active'
     ];
 
     public function materials()

@@ -36,6 +36,7 @@ Route::middleware(['auth', \App\Http\Middleware\CheckRole::class.':admin'])->gro
     Route::post('/courses/{course}/enroll', [CourseController::class, 'enrollUserInCourse'])->name('courses.enroll');
     Route::delete('/courses/{course}/unenroll/{user}', [CourseController::class, 'unenrollUserFromCourse'])->name('courses.unenroll');
     Route::get('/courses/{course}/students/search', [CourseController::class, 'searchStudents'])->name('courses.students.search');
+    Route::post('/courses/upload-thumbnail', [CourseController::class, 'uploadThumbnail'])->name('courses.upload-thumbnail');
 
 });
 

@@ -139,6 +139,9 @@ onMounted(() => {
                         <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Miniatura
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Nome
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -160,6 +163,11 @@ onMounted(() => {
                         </thead>
                         <tbody>
                         <tr v-for="course in courses" :key="course.id" class="bg-white border-b border-gray-200">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                <img v-if="course.thumbnail_path" :src="`/storage/${course.thumbnail_path}`" alt="Miniatura do curso"
+                                     class="w-16 h-16 object-cover" />
+                                <span v-else class="text-gray-500">Sem miniatura</span>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                 {{ course.name }}
                             </td>

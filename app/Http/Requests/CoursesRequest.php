@@ -24,13 +24,13 @@ class CoursesRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
-            'price' => 'required|numeric',
+            'price' => 'required',
             'seats' => 'required|integer|min:0',
             'registration_start' => 'required|date',
             'registration_end' => 'required|date|after_or_equal:registration_start',
             'description' => 'nullable|string',
-            'thumbnail' => 'nullable|url',
-            'is_active' => 'required|boolean',
+            'thumbnail_path' => 'nullable',
+            'is_active' => 'required|',
         ];
     }
 }
