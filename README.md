@@ -10,6 +10,11 @@ Permite vincular thumbnail(miniatura) ao curso.
 Insere algumas validações no cadastro de cursos. Exemplo abaixo.
 ![img_2.png](img_2.png)
 
+Reforço a necessidade de rodar comandos abaixo para instalar dependências novas do projeto e alteracao de tabela.
+```bash
+yarn install
+php artisan migrate
+```
 # Guia de Instalação do Projeto Laravel com Vue.js - Marcasite Cursos 
 
 + Este guia descreve o processo de instalação de um projeto Laravel com Vue.js. Siga os passos abaixo para configurar o ambiente e rodar o projeto.
